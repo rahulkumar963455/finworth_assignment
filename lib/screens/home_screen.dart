@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_example/screens/student_form.dart';
 import '../providers/student_database.dart';
+import '../models/student_model.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -10,7 +11,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(title: Text("Students")),
       body: SafeArea(
         child: FutureBuilder<void>(
-          future: context.read<StudentProvider>().fetchStudents(),
+          future: context.read<StudentProvider>().fetchStudents(), // ✅ Fetch students once
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -35,7 +36,6 @@ class HomeScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // Student Details
                               Expanded(
@@ -65,10 +65,31 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
 
-                              // Right-aligned Delete Icon
-                              IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
-                                onPressed: () => studentProvider.showDeleteDialog(student.id, context),
+                              // Edit & Delete Icons
+                              Column(
+                                children: [
+                                  // Edit Icon (Also Used for Update)
+                                  IconButton(
+                                    icon: Icon(Icons.edit, color: Colors.blue),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => StudentForm(student: student),
+                                        ),
+                                      ).then((_) {
+                                        context.read<StudentProvider>().fetchStudents(); // ✅ Refresh data
+                                      });
+                                    },
+                                  ),
+                                  // Delete Icon
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _showDeleteDialog(context, studentProvider, student.id);
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -83,11 +104,39 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => StudentForm()),
-        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StudentForm()),
+          ).then((_) {
+            context.read<StudentProvider>().fetchStudents(); // ✅ Refresh after returning from form
+          });
+        },
         child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  // ✅ Show delete confirmation dialog
+  void _showDeleteDialog(BuildContext context, StudentProvider studentProvider, String studentId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: Text("Delete Student"),
+        content: Text("Are you sure you want to delete this student?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              studentProvider.deleteStudent(studentId, context);
+            },
+            child: Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
