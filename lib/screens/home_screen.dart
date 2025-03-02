@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_example/auth_screens/signin_screen.dart';
 import 'package:sqflite_example/screens/student_form.dart';
 import '../providers/student_database.dart';
-import '../models/student_model.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Students")),
+      appBar: AppBar(
+        title: Text("Students"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _logout(context), // ✅ Logout Function
+          ),
+        ],
+      ),
       body: SafeArea(
         child: FutureBuilder<void>(
-          future: context.read<StudentProvider>().fetchStudents(), // ✅ Fetch students once
+          future: context.read<StudentProvider>().fetchStudents(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -68,7 +78,6 @@ class HomeScreen extends StatelessWidget {
                               // Edit & Delete Icons
                               Column(
                                 children: [
-                                  // Edit Icon (Also Used for Update)
                                   IconButton(
                                     icon: Icon(Icons.edit, color: Colors.blue),
                                     onPressed: () {
@@ -78,11 +87,10 @@ class HomeScreen extends StatelessWidget {
                                           builder: (context) => StudentForm(student: student),
                                         ),
                                       ).then((_) {
-                                        context.read<StudentProvider>().fetchStudents(); // ✅ Refresh data
+                                        context.read<StudentProvider>().fetchStudents();
                                       });
                                     },
                                   ),
-                                  // Delete Icon
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
                                     onPressed: () {
@@ -109,11 +117,23 @@ class HomeScreen extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => StudentForm()),
           ).then((_) {
-            context.read<StudentProvider>().fetchStudents(); // ✅ Refresh after returning from form
+            context.read<StudentProvider>().fetchStudents();
           });
         },
         child: Icon(Icons.add),
       ),
+    );
+  }
+
+  // ✅ Logout Function
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("isLoggedIn"); // Remove login status
+    await FirebaseAuth.instance.signOut(); // Firebase logout
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+          (route) => false, // Removes all previous screens
     );
   }
 

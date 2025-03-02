@@ -46,11 +46,11 @@ class SignInScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     bool istrue = await authProvider.signIn(context);
-                    if(istrue){
+                    if (istrue) {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => HomeScreen())
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
                       );
                     }
                   },

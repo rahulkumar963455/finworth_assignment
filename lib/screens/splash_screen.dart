@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'package:sqflite_example/auth_screens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_example/auth_screens/signin_screen.dart';
 import 'package:sqflite_example/screens/home_screen.dart';
-
-import '../auth_screens/signin_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,16 +15,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToNextScreen();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _navigateToNextScreen();
+    });
   }
 
-  void _navigateToNextScreen() {
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    });
+  Future<void> _navigateToNextScreen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+
+    // Navigate after 3 seconds
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return; // Ensure widget is still in the tree before navigating
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => isLoggedIn ? HomeScreen() : SignInScreen()),
+    );
   }
 
   @override
@@ -34,48 +40,32 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.blueAccent,
       body: Center(
         child: TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.0, end: 1.0), // Animate from 0 to 1
+          tween: Tween(begin: 0.0, end: 1.0),
           duration: const Duration(seconds: 2),
-          curve: Curves.easeInOut, // Smooth animation curve
+          curve: Curves.easeInOut,
           builder: (context, value, child) {
             return Transform.scale(
-              scale: 0.5 + (value * 0.5), // Scale from 0.5x to 1x
+              scale: 0.5 + (value * 0.5),
               child: Opacity(
-                opacity: value, // Fade in the text
+                opacity: value,
                 child: Text.rich(
                   TextSpan(
                     children: [
                       TextSpan(
                         text: "Assignment ",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       TextSpan(
                         text: "of ",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.yellow,
-                        ),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.yellow),
                       ),
                       TextSpan(
                         text: "Fine",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.green),
                       ),
                       TextSpan(
                         text: "Worth",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
-                        ),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.orange),
                       ),
                     ],
                   ),

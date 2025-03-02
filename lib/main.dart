@@ -1,9 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_example/providers/auth_provier.dart';
 import 'package:sqflite_example/providers/student_database.dart';
+import 'package:sqflite_example/screens/home_screen.dart';
 import 'package:sqflite_example/screens/splash_screen.dart';
+
+import 'auth_screens/signin_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,8 +16,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),  // ✅ Fixed: Removed duplicate
-        ChangeNotifierProvider(create: (_) => StudentProvider()),  // ✅ Added StudentProvider
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => StudentProvider()),
       ],
       child: const MyApp(),
     ),
@@ -23,12 +27,17 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<bool> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("isLoggedIn") ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
-      home: const SplashScreen(),
+      home: SplashScreen()
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -65,7 +66,6 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  /// **Sign In Method (Firebase)**
   Future<bool> signIn(BuildContext context) async {
     if (!signInFormKey.currentState!.validate()) return false;
 
@@ -75,13 +75,15 @@ class AuthProvider with ChangeNotifier {
         password: passwordController.text.trim(),
       );
 
+      // Store login status in SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool("isLoggedIn", true);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Signed in successfully!")),
       );
 
-      // Clear fields after successful sign-in
       _clearSignInFields();
-
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

@@ -49,9 +49,9 @@ class StudentProvider with ChangeNotifier {
       }
 
       notifyListeners();
-      await fetchStudents(); // ✅ Refresh list after adding or updating
+      await fetchStudents();
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen())); // ✅ Close form after submission
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Student ${id == null ? 'added' : 'updated'} successfully!")),
       );

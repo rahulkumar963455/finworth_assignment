@@ -26,7 +26,7 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 15),
                 _buildInputField(
-                  controller: authProvider.emailController,
+                  controller: authProvider.emailControllerS,
                   label: "Email",
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
@@ -39,7 +39,7 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 15),
                 _buildInputField(
-                  controller: authProvider.passwordController,
+                  controller: authProvider.passwordControllerS,
                   label: "Password",
                   obscureText: true,
                   validator: (value) {
