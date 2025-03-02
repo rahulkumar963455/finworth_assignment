@@ -1,0 +1,1 @@
+C:\Users\dell\AndroidStudioProjects\sqflite_example\build\app\intermediates\cxx\Debug\f4u2o2th\obj\armeabi-v7a

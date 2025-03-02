@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "774831412316",
+    "project_id": "finworth-assignment",
+    "storage_bucket": "finworth-assignment.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774831412316:android:d0ec5d49a454f1dd5c8299",
+        "android_client_info": {
+          "package_name": "com.example.finworth_assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuggpMM_nGe129TxOz5QIrS97n-8PgzDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774831412316:android:0fc0e92ddb0f0da95c8299",
+        "android_client_info": {
+          "package_name": "com.example.sqflite_example"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuggpMM_nGe129TxOz5QIrS97n-8PgzDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

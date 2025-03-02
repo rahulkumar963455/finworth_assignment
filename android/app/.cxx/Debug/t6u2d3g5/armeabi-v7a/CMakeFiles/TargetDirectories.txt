@@ -1,0 +1,2 @@
+C:/Users/dell/AndroidStudioProjects/sqflite_example/android/app/.cxx/Debug/t6u2d3g5/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/dell/AndroidStudioProjects/sqflite_example/android/app/.cxx/Debug/t6u2d3g5/armeabi-v7a/CMakeFiles/rebuild_cache.dir
