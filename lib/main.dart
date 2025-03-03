@@ -4,10 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_example/providers/auth_provier.dart';
 import 'package:sqflite_example/providers/student_database.dart';
-import 'package:sqflite_example/screens/home_screen.dart';
 import 'package:sqflite_example/screens/splash_screen.dart';
-
-import 'auth_screens/signin_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

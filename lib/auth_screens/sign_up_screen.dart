@@ -55,17 +55,23 @@ class SignUpScreen extends StatelessWidget {
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) return "Please confirm your password";
-                    if (value != authProvider.passwordController.text) return "Passwords do not match";
+                    if (value != authProvider.passwordControllerS.text) return "Passwords do not match";
                     return null;
                   },
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: ()async  {
-                    bool  istrue = await authProvider.signUp(context);
-                    if(istrue){
-                      Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SignInScreen()));
+
+                // ✅ Show CircularProgressIndicator when signing up
+                authProvider.isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: () async {
+                    bool istrue = await authProvider.signUp(context);
+                    if (istrue) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignInScreen()),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -73,6 +79,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   child: Text("Sign Up"),
                 ),
+
                 SizedBox(height: 20),
                 TextButton(
                   onPressed: () => Navigator.pushReplacement(

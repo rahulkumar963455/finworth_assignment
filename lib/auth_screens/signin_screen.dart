@@ -26,8 +26,7 @@ class SignInScreen extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) return "Please enter your email";
-                    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                        .hasMatch(value)) {
+                    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
                       return "Enter a valid email";
                     }
                     return null;
@@ -45,7 +44,11 @@ class SignInScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
+
+                // ✅ Show CircularProgressIndicator when signing in
+                authProvider.isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
                   onPressed: () async {
                     bool istrue = await authProvider.signIn(context);
                     if (istrue) {
@@ -59,6 +62,7 @@ class SignInScreen extends StatelessWidget {
                   ),
                   child: Text("Sign In"),
                 ),
+
                 SizedBox(height: 20),
                 TextButton(
                   onPressed: () => Navigator.pushReplacement(
@@ -77,6 +81,7 @@ class SignInScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,

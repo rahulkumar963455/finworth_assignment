@@ -19,30 +19,31 @@ class AuthProvider with ChangeNotifier {
   final GlobalKey<FormState> signUpFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
 
-  // Helper function for email validation
-  bool isValidEmail(String email) {
-    return RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(email);
+  // ✅ Loading State
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
   }
 
   /// **Sign Up Method (Firebase)**
   Future<bool> signUp(BuildContext context) async {
     if (!signUpFormKey.currentState!.validate()) {
-      print("Form validation failed");
       return false;
     }
 
     String email = emailControllerS.text.trim();
     String password = passwordControllerS.text.trim();
 
+    setLoading(true); // ✅ Start loading
     try {
-      print("Creating user with email: $email");
-
       await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      print("User Created Successfully");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Account created successfully!")),
       );
@@ -50,32 +51,24 @@ class AuthProvider with ChangeNotifier {
       _clearSignUpFields();
       return true;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        _showErrorMessage(context, "This email is already in use.");
-      } else if (e.code == 'weak-password') {
-        _showErrorMessage(context, "The password provided is too weak.");
-      } else if (e.code == 'invalid-email') {
-        _showErrorMessage(context, "The email address is badly formatted.");
-      } else {
-        _showErrorMessage(context, e.message ?? "An unexpected error occurred.");
-      }
-      return false; // Return false to indicate failure
-    } catch (e) {
-      _showErrorMessage(context, "Error: ${e.toString()}");
-      return false; // Return false to indicate failure
+      _showErrorMessage(context, e.message ?? "An error occurred.");
+      return false;
+    } finally {
+      setLoading(false); // ✅ Stop loading
     }
   }
 
+  /// **Sign In Method (Firebase)**
   Future<bool> signIn(BuildContext context) async {
     if (!signInFormKey.currentState!.validate()) return false;
 
+    setLoading(true); // ✅ Start loading
     try {
       await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Store login status in SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool("isLoggedIn", true);
 
@@ -86,15 +79,9 @@ class AuthProvider with ChangeNotifier {
       _clearSignInFields();
       return true;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        _showErrorMessage(context, "No user found for this email.");
-      } else if (e.code == 'wrong-password') {
-        _showErrorMessage(context, "Incorrect password.");
-      } else {
-        _showErrorMessage(context, e.message ?? "An unexpected error occurred.");
-      }
-    } catch (e) {
-      _showErrorMessage(context, "Error: ${e.toString()}");
+      _showErrorMessage(context, e.message ?? "An error occurred.");
+    } finally {
+      setLoading(false); // ✅ Stop loading
     }
     return false;
   }
